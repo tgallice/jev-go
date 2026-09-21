@@ -1,0 +1,31 @@
+version: "2"
+
+linters:
+  enable:
+    - govet
+    - staticcheck
+    - errcheck
+    - ineffassign
+    - unused
+    - misspell
+    - revive
+  settings:
+    errcheck:
+      # A drained response body's Close error carries no information worth acting on.
+      exclude-functions:
+        - (io.Closer).Close
+    staticcheck:
+      checks:
+        - all
+        # QF1011 fights the explicit type annotations used in Ask's compile-time inference tests.
+        - -QF1011
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - revive
+          - errcheck
+      - path: answer\.go
+        linters:
+          - revive
+        text: "exported const .* should have comment"

@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+      - name: Check formatting
+        run: test -z "$(gofmt -l .)"
+      - name: Vet
+        run: go vet ./...
+      - name: Test
+        run: go test -race -cover ./...
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+      - uses: golangci/golangci-lint-action@v9
+        with:
+          # v2 config format requires the v9 action; pinned so a new release
+          # built against an older Go toolchain cannot break CI.
+          version: v2.13.2
+
+  deps-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26'
+          cache: true
+      # Production code must stay dependency-free; testify may only appear
+      # as a test dependency, never in the deps of the root package itself.
+      - name: No external module in production code
+        run: |
+          modules="$(go list -deps -f '{{if .Module}}{{.Module.Path}}{{end}}' github.com/tgallice/jev-go | sort -u)"
+          external="$(echo "$modules" | grep -v '^github.com/tgallice/jev-go$' || true)"
+          if [ -n "$external" ]; then
+            echo "unexpected external module in production code:"
+            echo "$external"
+            exit 1
+          fi

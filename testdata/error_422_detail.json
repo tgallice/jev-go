@@ -1,0 +1,6 @@
+{
+  "detail": [
+    {"loc": ["body", "questions", "severity", "criteria"], "msg": "field required", "type": "value_error.missing"},
+    {"loc": ["body", "model"], "msg": "extra fields not permitted", "type": "value_error.extra"}
+  ]
+}

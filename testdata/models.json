@@ -1,0 +1,19 @@
+{
+  "models": [
+    {
+      "name": "jev-latest",
+      "description": "Alias for the current stable jev model",
+      "release_date": "2025-11-04"
+    },
+    {
+      "name": "jev-preview",
+      "description": "Alias for the next jev model",
+      "release_date": "2025-11-04"
+    },
+    {
+      "name": "jev-1.13.0",
+      "description": "System One evaluation model",
+      "release_date": "2025-11-04"
+    }
+  ]
+}
